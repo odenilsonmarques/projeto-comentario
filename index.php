@@ -2,17 +2,16 @@
 <?php
 include_once './assets/config/conexao.php';
 
-if(isset($_POST['nome']) && empty($_POST['nome'])== FALSE){
-    
+if (isset($_POST['nome']) && empty($_POST['nome']) == FALSE) {
+
     $nome = addslashes($_POST['nome']);
     $mensagem = addslashes($_POST['mensagem']);
-    
-    $sql = $conectPDO -> prepare("INSERT INTO tb_comentario SET nome= :nome, msg= :msg, data_msg= NOW()");
-    $sql -> bindValue(":nome", $nome);
-    $sql -> bindValue(":msg", $mensagem);
-    $sql -> execute();   
-    
-    print_r($sql);
+
+    $sql = $conectPDO->prepare("INSERT INTO tb_comentario SET nome= :nome, mensagem= :mensagem, data_msg= NOW()");
+    $sql->bindValue(":nome", $nome);
+    $sql->bindValue(":mensagem", $mensagem);
+    $sql->execute();
+    header('Location: index.php');
 }
 ?>
 <html>
@@ -49,3 +48,22 @@ if(isset($_POST['nome']) && empty($_POST['nome'])== FALSE){
         </div>
     </body>
 </html>
+<?php
+$sql = "SELECT *FROM tb_comentario";
+$exeSql = $conectPDO->query($sql);
+
+if ($exeSql->rowCount() > 0) {
+    foreach ($exeSql->fetchAll() as $msg):
+        ?>
+        <strong><?php echo $msg['nome']; ?></strong><br/>
+        <strong><?php echo $msg['mensagem']; ?></strong><br/>
+        <strong><?php echo $msg['data_msg']; ?></strong><br/>
+         <hr/>
+    <?php
+    endforeach;
+} else {
+    echo "Não há mensagem";
+
+}
+
+    
